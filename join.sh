@@ -1,9 +1,8 @@
 #!/bin/sh
 
 set -o errexit
-set -xv
 
-APP=iTerm2
+APP=blender
 INPUT="$(pwd)/capture"
 NOW=$(date +"%y%m%d%H%M%S")
 OUTPUT="$INPUT/$NOW.mov"
@@ -28,6 +27,6 @@ for pic in c*.jpg; do
 done;
 
 "$FFMPEG" -r 24 -i c%05d.jpg -b:v 20000k "$OUTPUT"
-#rm ./c*.jpg
+rm ./c*.jpg
 
 cd -

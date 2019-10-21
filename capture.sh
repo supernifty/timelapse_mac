@@ -1,17 +1,21 @@
 #!/bin/bash
 
-echo "starting..."
-
 set -o errexit
 
+NOW=$(date +"%y%m%d%H%M%S")
+
 # leave blank for all
-#APP=blender
-APP=
+#APP_INCLUDE=blender
+APP_INCLUDE=blender
+APP_SKIP="^(loginwindow|ScreenSaverEngine)$"
 
 OUTPUT=$(pwd)/capture
-SLEEP=60
+SLEEP=15
+VERBOSE=0
 
 mkdir -p "$OUTPUT"
+
+echo "$NOW: writing to $OUTPUT with period $SLEEP..."
 
 cd "$OUTPUT"
 
@@ -23,13 +27,20 @@ while true; do
   NOW=$(date +"%y%m%d%H%M%S")
   RUNNING=$(lsappinfo info $(lsappinfo front) | head -1 | sed 's/"\([^"]*\)".*/\1/')
 
-  if [ "$APP" == "" -o "$APP" == "$RUNNING" ]; then
+  if [[ "$RUNNING" =~ "$APP_SKIP" ]]; then
+    if [[ "$VERBOSE" -eq "1" ]]; then
+      echo "$NOW: skipping $RUNNING"
+    fi
+    sleep $SLEEP
+  elif [ "$APP_INCLUDE" == "" -o "$APP_INCLUDE" == "$RUNNING" ]; then
     screencapture -C -t jpg -x "$OUTPUT/$NOW-$RUNNING.jpg"
-    echo "captured $OUTPUT/$NOW-$RUNNING.jpg"
+    echo "$NOW: captured $OUTPUT/$NOW-$RUNNING.jpg"
     sleep $SLEEP & pid=$!
     wait $pid
   else
-    echo "skipping $RUNNING"
+    if [[ "$VERBOSE" -eq "1" ]]; then
+      echo "$NOW: skipping $RUNNING"
+    fi
     sleep $SLEEP
   fi
 
