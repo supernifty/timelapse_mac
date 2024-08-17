@@ -6,7 +6,7 @@ NOW=$(date +"%y%m%d%H%M%S")
 
 # leave blank for all
 #APP_INCLUDE=blender
-APP_INCLUDE=blender
+APP_INCLUDE=Blender
 APP_SKIP="^(loginwindow|ScreenSaverEngine)$"
 
 OUTPUT=$(pwd)/capture
@@ -25,7 +25,8 @@ RES_WIDTH=$((RES_WIDTH/2))
 
 while true; do
   NOW=$(date +"%y%m%d%H%M%S")
-  RUNNING=$(lsappinfo info $(lsappinfo front) | head -1 | sed 's/"\([^"]*\)".*/\1/')
+  #RUNNING=$(lsappinfo info $(lsappinfo front) | head -1 | sed 's/"\([^"]*\)".*/\1/')
+  RUNNING=$(lsappinfo | grep "$(lsappinfo front)" | sed 's/^[^ ]* //; s/"\([^"]*\)".*/\1/')
 
   if [[ "$RUNNING" =~ "$APP_SKIP" ]]; then
     if [[ "$VERBOSE" -eq "1" ]]; then
